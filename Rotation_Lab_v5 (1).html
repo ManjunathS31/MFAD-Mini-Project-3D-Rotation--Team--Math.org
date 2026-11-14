@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rotation Lab</title>
+<style>
+:root {
+  --site-primary: #2457E6;
+  --site-on-primary: #FFFFFF;
+  --site-secondary: #DCE7FF;
+  --site-on-secondary: #142A60;
+  --site-background: #F3F6FC;
+  --site-on-background: #17233D;
+  --site-font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --site-font-heading: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --site-heading-scale: 1;
+  --site-spacing-scale: 1;
+  --site-radius-scale: 1;
+  --site-decoration-opacity: 1;
+  color-scheme: light dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: var(--site-font-body); background: light-dark(#F3F6FC,#0D1422); color: light-dark(#17233D,#EAF0FC); }
+#app { min-height: 100vh; width: 100%; background-color: light-dark(#F3F6FC,#0D1422); color: light-dark(#17233D,#EAF0FC); border-radius: 0; }
+.topbar { background: var(--site-primary); color: var(--site-on-primary); padding: calc(22px * var(--site-spacing-scale)) max(22px, calc((100vw - 1240px)/2)); display:flex; align-items:center; justify-content:space-between; gap:20px; }
+.brand { display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:-.03em; font-size:20px; }
+.brandmark { width:38px; height:38px; display:grid; place-items:center; background:#FFFFFF22; border:1px solid #FFFFFF55; border-radius:12px; font-size:21px; }
+.topnote { font-size:12px; opacity:.85; letter-spacing:.12em; text-transform:uppercase; }
+main { max-width:1240px; margin:auto; padding:30px 22px 48px; }
+.hero { display:flex; justify-content:space-between; align-items:flex-end; gap:22px; margin-bottom:24px; }
+.eyebrow { color:var(--site-primary); text-transform:uppercase; letter-spacing:.15em; font-size:11px; font-weight:800; }
+h1 { font-family:var(--site-font-heading); font-size:calc(38px * var(--site-heading-scale)); letter-spacing:-.055em; line-height:1.05; margin:10px 0 12px; }
+.hero p { margin:0; max-width:640px; color:light-dark(#59657B,#B8C4D8); line-height:1.6; }
+.pill { white-space:nowrap; border-radius:999px; padding:9px 13px; background:var(--site-secondary); color:var(--site-on-secondary); font-size:12px; font-weight:750; }
+.layout { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(300px,.9fr); gap:18px; align-items:start; }
+.panel { border:1px solid light-dark(#DCE3F0,#344159); border-radius:calc(18px * var(--site-radius-scale)); background:light-dark(#FFFFFF,#172238); overflow:hidden; box-shadow:0 10px 30px #1C2B4A0B; }
+.panelhead { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:17px 19px; border-bottom:1px solid light-dark(#E6EBF4,#344159); }
+.panelhead h2 { margin:0; font-size:14px; letter-spacing:-.01em; }
+.mini { font-size:11px; color:light-dark(#748097,#AEBBD0); }
+.scene { position:relative; background:radial-gradient(ellipse at 50% 48%, light-dark(#FFFFFF,#202F4A) 0%, light-dark(#F4F7FD,#121B2B) 70%); }
+.scene-pair { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:12px; }
+.scene-view { min-width:0; overflow:hidden; border:1px solid light-dark(#E0E7F2,#344159); border-radius:12px; background:light-dark(#F8FAFE,#121B2B); }
+.scene-view h3 { margin:0; padding:10px 12px; font-size:11px; letter-spacing:.08em; text-align:center; border-bottom:1px solid light-dark(#E0E7F2,#344159); }
+.scene-view canvas { height:330px; }
+canvas { display:block; width:100%; height:400px; }
+.scene-label { position:absolute; left:18px; bottom:15px; font-size:11px; color:light-dark(#6E7A91,#B8C4D8); background:light-dark(#FFFFFFD9,#101827D9); border:1px solid light-dark(#E0E7F2,#344159); padding:8px 10px; border-radius:9px; }
+.legend { display:flex; gap:14px; padding:13px 18px; border-top:1px solid light-dark(#E6EBF4,#344159); flex-wrap:wrap; }
+.legend span { display:flex; align-items:center; gap:7px; font-size:11px; color:light-dark(#5E6A80,#B8C4D8); }
+.dot { width:8px;height:8px;border-radius:50%;display:inline-block; }
+.controls { padding:18px; }
+.field { margin-bottom:19px; }
+.field label { display:flex; justify-content:space-between; align-items:center; font-size:12px; font-weight:750; margin-bottom:9px; }
+select, button { font:inherit; }
+select { width:100%; background:light-dark(#F7F9FD,#101827); color:inherit; border:1px solid light-dark(#D9E1EF,#3A4861); padding:12px 13px; border-radius:10px; }
+.rangevalue { color:var(--site-primary); font-variant-numeric:tabular-nums; }
+input[type=range] { width:100%; accent-color:var(--site-primary); cursor:pointer; }
+.rangeends { display:flex; justify-content:space-between; color:light-dark(#8792A5,#9EABC0); font-size:10px; margin-top:3px; }
+.axis { display:flex; align-items:center; gap:9px; }
+.axisbadge { width:25px;height:25px;display:grid;place-items:center;border-radius:7px;font-size:11px;font-weight:800; }
+.x { background:#FFE5E2;color:#BA3B34; }.y { background:#DDF8E9;color:#18764C; }.z { background:#DDE8FF;color:#2457B8; }
+.buttons { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:6px; }
+button { border:1px solid light-dark(#D9E1EF,#3A4861); background:light-dark(#FFFFFF,#1B2940); color:inherit; border-radius:10px; padding:11px 12px; cursor:pointer; font-size:12px; font-weight:750; }
+button.primary { background:var(--site-primary); color:var(--site-on-primary); border-color:var(--site-primary); }
+button:hover { filter:brightness(.97); }
+.metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:18px 0; }
+.metric { padding:16px; background:light-dark(#FFFFFF,#172238); border:1px solid light-dark(#DCE3F0,#344159); border-radius:calc(15px * var(--site-radius-scale)); }
+.metric .label { color:light-dark(#6C7890,#AEBBD0); font-size:11px; margin-bottom:9px; }
+.metric strong { font-size:22px; letter-spacing:-.04em; font-variant-numeric:tabular-nums; }
+.metric .sub { color:light-dark(#748097,#AEBBD0); font-size:10px; margin-top:5px; }
+.lower { display:grid; grid-template-columns:1.1fr .9fr; gap:18px; }
+.mathbody { padding:18px; }
+.formula { padding:13px 14px; border-radius:11px; background:light-dark(#F3F6FD,#101827); border:1px solid light-dark(#E0E7F2,#344159); font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; overflow:auto; white-space:pre; line-height:1.75; }
+.mathbody p { font-size:12px; line-height:1.65; color:light-dark(#5E6A80,#B8C4D8); margin:12px 0 0; }
+.status { display:inline-flex; align-items:center; gap:7px; font-size:11px; font-weight:800; color:light-dark(#14764B,#7CE0B0); background:light-dark(#E6F8EF,#12372B); border-radius:999px; padding:7px 10px; margin-bottom:12px; }
+.status i { width:6px;height:6px;background:#25B978;border-radius:50%; }
+table { border-collapse:collapse; width:100%; font-size:11px; font-variant-numeric:tabular-nums; }
+th,td { text-align:right; padding:10px 9px; border-bottom:1px solid light-dark(#E6EBF4,#344159); }
+th { color:light-dark(#78849A,#AEBBD0); font-size:10px; text-transform:uppercase; letter-spacing:.08em; }
+th:first-child,td:first-child { text-align:left; }
+.explain { margin-top:18px; padding:18px 20px; display:flex; gap:16px; align-items:flex-start; background:var(--site-secondary); color:var(--site-on-secondary); border-radius:calc(15px * var(--site-radius-scale)); }
+.explain-icon { font-size:21px; }
+.explain h3 { margin:0 0 6px; font-size:13px; }
+.explain p { margin:0; font-size:12px; line-height:1.65; }
+footer { text-align:center; font-size:11px; color:light-dark(#78849A,#AEBBD0); padding:25px 12px 8px; }
+@media (max-width:850px) { .layout,.lower { grid-template-columns:1fr; } .hero { align-items:flex-start; flex-direction:column; } h1 {font-size:32px;} canvas {height:330px;} }
+@media (max-width:850px) { .scene-pair {grid-template-columns:1fr;} .scene-view canvas {height:300px;} }
+@media (max-width:520px) { main {padding:22px 13px 35px;} .topbar {padding:15px;} .topnote {display:none;} .metrics {gap:7px;} .metric {padding:12px 10px;} .metric strong {font-size:18px;} .panelhead {padding:14px;} .scene-view canvas {height:260px;} }
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="topbar"><div class="brand"><div class="brandmark">↻</div><span>Rotation Lab</span></div><div class="topnote">Linear algebra · Interactive workspace</div></header>
+  <main>
+    <section class="hero"><div><div class="eyebrow">Explore the mathematics of motion</div><h1>Rotate it. Measure it.<br>Prove it.</h1><p>An interactive 3D rotation lab. Change an object's orientation and see how orthogonal matrices transform coordinates while preserving geometry.</p></div><div class="pill">● Live matrix calculations</div></section>
+    <section class="layout">
+      <article class="panel"><div class="panelhead"><h2>3D OBJECT VIEW</h2><span class="mini">Both views update with the sliders</span></div><div class="scene-pair"><div class="scene-view"><h3>ORIGINAL OBJECT</h3><canvas id="originalScene" aria-label="Original 3D object"></canvas></div><div class="scene-view"><h3>ROTATED OBJECT</h3><canvas id="rotatedScene" aria-label="Rotated 3D object"></canvas></div></div><div class="scene-label" id="sceneLabel">Cube · Original and rotated geometry</div><div class="legend"><span><i class="dot" style="background:#9BA8BD"></i>Original shape</span><span><i class="dot" style="background:#356BFA"></i>Rotated shape</span><span><i class="dot" style="background:#2CB889"></i>Coordinate axes</span></div></article>
+      <article class="panel"><div class="panelhead"><h2>ROTATION CONTROLS</h2><span class="mini">Degrees</span></div><div class="controls">
+        <div class="field"><label for="shape">Choose a 3D object</label><select id="shape"><option value="cube">Cube</option><option value="tetra">Tetrahedron</option><option value="octa">Octahedron</option><option value="pyramid">Square pyramid</option><option value="drone">Quadcopter drone</option><option value="robotarm">Robotic arm</option><option value="airplane">Airplane</option><option value="satellite">Satellite</option><option value="car">Car</option><option value="turbine">Wind turbine</option></select></div>
+        <div class="field"><label><span class="axis"><i class="axisbadge x">X</i> Roll · X-axis</span><span class="rangevalue" id="xVal">25°</span></label><input id="xAngle" type="range" min="-180" max="180" value="25"><div class="rangeends"><span>−180°</span><span>0°</span><span>180°</span></div></div>
+        <div class="field"><label><span class="axis"><i class="axisbadge y">Y</i> Pitch · Y-axis</span><span class="rangevalue" id="yVal">35°</span></label><input id="yAngle" type="range" min="-180" max="180" value="35"><div class="rangeends"><span>−180°</span><span>0°</span><span>180°</span></div></div>
+        <div class="field"><label><span class="axis"><i class="axisbadge z">Z</i> Yaw · Z-axis</span><span class="rangevalue" id="zVal">15°</span></label><input id="zAngle" type="range" min="-180" max="180" value="15"><div class="rangeends"><span>−180°</span><span>0°</span><span>180°</span></div></div>
+        <div class="buttons"><button id="reset">↺ Reset angles</button><button class="primary" id="random">✦ Try example</button></div>
+      </div></article>
+    </section>
+    <section class="metrics">
+      <div class="metric"><div class="label">ORTHOGONALITY ERROR</div><strong id="orthErr">0.000000</strong><div class="sub">Closer to zero is better</div></div>
+      <div class="metric"><div class="label">DETERMINANT</div><strong id="detVal">+1.000</strong><div class="sub">+1 indicates a proper rotation</div></div>
+      <div class="metric"><div class="label">EDGE LENGTH CHANGE</div><strong id="lengthErr">0.000%</strong><div class="sub">Original vs rotated model</div></div>
+    </section>
+    <section class="lower">
+      <article class="panel"><div class="panelhead"><h2>COMBINED ROTATION MATRIX R</h2><span class="mini">R = Rₓ Rᵧ R_z</span></div><div class="mathbody"><div class="formula" id="matrix">Loading matrix…</div><p>For this site's column-vector convention, the combined rotation is applied as <b>v′ = Rv</b>. The order of matrix multiplication matters because rotations generally do not commute.</p></div></article>
+      <article class="panel"><div class="panelhead"><h2>VERTEX CHECK</h2><span class="mini">Sample coordinates</span></div><div class="mathbody"><div class="status"><i></i><span id="checkText">Geometry preserved</span></div><table><thead><tr><th>Vertex</th><th>Original length</th><th>New length</th></tr></thead><tbody id="vertexRows"></tbody></table><p>Lengths are measured from the origin. The same rotation preserves them up to rounding error.</p></div></article>
+    </section>
+    <section class="explain"><div class="explain-icon">ⓘ</div><div><h3>What is the real-world connection?</h3><p>3D graphics, CAD viewers, robotics, and orientation systems use rotation mathematics to change an object's direction without stretching or shearing it. This website is an educational simulator; it demonstrates the mathematics and does not control physical hardware.</p></div></section>
+    <footer>Rotation Lab · An interactive demonstration of orthogonal matrices and 3D geometry</footer>
+  </main>
+</div>
+<script>
+const shapes = {
+ cube:{label:'Cube',v:[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]],e:[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]]},
+ tetra:{label:'Tetrahedron',v:[[1,1,1],[-1,-1,1],[-1,1,-1],[1,-1,-1]],e:[[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]]},
+ octa:{label:'Octahedron',v:[[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]],e:[[0,2],[0,3],[0,4],[0,5],[1,2],[1,3],[1,4],[1,5],[2,4],[2,5],[3,4],[3,5]]},
+ pyramid:{label:'Square pyramid',v:[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[0,0,1.5]],e:[[0,1],[1,2],[2,3],[3,0],[0,4],[1,4],[2,4],[3,4]]},
+ drone:{label:'Quadcopter drone',v:[[-.42,-.3,0],[.42,-.3,0],[.42,.3,0],[-.42,.3,0],[-1.35,-.85,0],[1.35,-.85,0],[1.35,.85,0],[-1.35,.85,0],[-1.52,-1.02,.04],[-1.18,-1.02,.04],[-1.18,-.68,.04],[-1.52,-.68,.04],[1.18,-1.02,.04],[1.52,-1.02,.04],[1.52,-.68,.04],[1.18,-.68,.04],[1.18,.68,.04],[1.52,.68,.04],[1.52,1.02,.04],[1.18,1.02,.04],[-1.52,.68,.04],[-1.18,.68,.04],[-1.18,1.02,.04],[-1.52,1.02,.04],[0,0,.28],[0,0,-.22]],e:[[0,1],[1,2],[2,3],[3,0],[0,24],[1,24],[2,24],[3,24],[0,4],[1,5],[2,6],[3,7],[4,5],[5,6],[6,7],[7,4],[8,9],[9,10],[10,11],[11,8],[12,13],[13,14],[14,15],[15,12],[16,17],[17,18],[18,19],[19,16],[20,21],[21,22],[22,23],[23,20],[24,25]]},
+ robotarm:{label:'Robotic arm',v:[[-.72,-.72,-.65],[.72,-.72,-.65],[.72,.72,-.65],[-.72,.72,-.65],[-.72,-.72,-.4],[.72,-.72,-.4],[.72,.72,-.4],[-.72,.72,-.4],[0,0,-.4],[0,0,.15],[.18,0,.15],[.18,0,.82],[.55,0,1.05],[.95,0,1.05],[1.12,0,.95],[1.12,0,1.15],[1.35,0,.82],[1.35,0,1.28]],e:[[0,1],[1,2],[2,3],[3,0],[0,4],[1,5],[2,6],[3,7],[4,5],[5,6],[6,7],[7,4],[4,8],[5,8],[6,8],[7,8],[8,9],[9,10],[10,11],[9,11],[11,12],[12,13],[13,14],[14,15],[13,15],[14,16],[15,17],[16,17]]},
+ airplane:{label:'Airplane',v:[[1.55,0,0],[-1.35,0,0],[-.55,-1.25,0],[.35,-1.05,0],[-.55,1.25,0],[.35,1.05,0],[-1.05,-.48,0],[-1.05,.48,0],[-1.18,-.45,.42],[-1.18,.45,.42],[-.78,-.38,.42],[-.78,.38,.42],[1.2,-.28,0],[1.2,.28,0]],e:[[0,1],[1,2],[2,3],[3,0],[1,4],[4,5],[5,0],[2,6],[6,7],[7,4],[6,8],[8,9],[9,7],[8,10],[10,11],[11,9],[10,6],[11,7],[12,13],[13,0],[12,0]]},
+ satellite:{label:'Satellite',v:[[-.38,-.38,-.38],[.38,-.38,-.38],[.38,.38,-.38],[-.38,.38,-.38],[-.38,-.38,.38],[.38,-.38,.38],[.38,.38,.38],[-.38,.38,.38],[-1.5,-.45,-.04],[-.52,-.45,-.04],[-.52,.45,-.04],[-1.5,.45,-.04],[.52,-.45,-.04],[1.5,-.45,-.04],[1.5,.45,-.04],[.52,.45,-.04],[0,0,.38],[0,0,.95],[-.18,0,.78],[.18,0,.78]],e:[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7],[8,9],[9,10],[10,11],[11,8],[12,13],[13,14],[14,15],[15,12],[5,12],[4,9],[6,15],[7,10],[16,17],[17,18],[17,19]]},
+ car:{label:'Car',v:[[-1.35,-.55,-.28],[1.35,-.55,-.28],[1.35,.55,-.28],[-1.35,.55,-.28],[-.9,-.42,.15],[.72,-.42,.15],[.45,.42,.15],[-.65,.42,.15],[-.48,-.34,.55],[.35,-.34,.55],[.35,.34,.55],[-.48,.34,.55],[-.95,-.62,-.2],[-.55,-.62,-.2],[-.55,-.62,.05],[-.95,-.62,.05],[.65,-.62,-.2],[1.05,-.62,-.2],[1.05,-.62,.05],[.65,-.62,.05],[-.95,.62,-.2],[-.55,.62,-.2],[-.55,.62,.05],[-.95,.62,.05],[.65,.62,-.2],[1.05,.62,-.2],[1.05,.62,.05],[.65,.62,.05]],e:[[0,1],[1,2],[2,3],[3,0],[0,4],[4,5],[5,6],[6,7],[7,3],[4,8],[8,9],[9,5],[8,11],[11,10],[10,9],[10,6],[12,13],[13,14],[14,15],[15,12],[16,17],[17,18],[18,19],[19,16],[20,21],[21,22],[22,23],[23,20],[24,25],[25,26],[26,27],[27,24]]},
+ turbine:{label:'Wind turbine',v:[[-.12,-.12,-1.35],[.12,-.12,-1.35],[.12,.12,-1.35],[-.12,.12,-1.35],[-.12,-.12,.35],[.12,-.12,.35],[.12,.12,.35],[-.12,.12,.35],[0,0,.38],[0,0,.62],[0,1.48,.72],[-.12,1.4,.62],[0,-1.42,.72],[.12,-1.35,.62],[1.28,-.05,.72],[1.2,.08,.62],[-1.28,-.05,.72],[-1.2,.08,.62]],e:[[0,1],[1,2],[2,3],[3,0],[0,4],[1,5],[2,6],[3,7],[4,5],[5,6],[6,7],[7,4],[8,9],[9,10],[10,11],[9,12],[12,13],[9,14],[14,15],[9,16],[16,17]]}
+};
+const $=id=>document.getElementById(id);
+const originalCanvas=$('originalScene'), rotatedCanvas=$('rotatedScene');
+const originalCtx=originalCanvas.getContext('2d'), rotatedCtx=rotatedCanvas.getContext('2d');
+function mul(A,B){return A.map(row=>B[0].map((_,j)=>row.reduce((s,x,k)=>s+x*B[k][j],0)));}
+function transpose(A){return A[0].map((_,j)=>A.map(r=>r[j]));}
+function rotMat(){const x=+$('xAngle').value*Math.PI/180,y=+$('yAngle').value*Math.PI/180,z=+$('zAngle').value*Math.PI/180;
+ const Rx=[[1,0,0],[0,Math.cos(x),-Math.sin(x)],[0,Math.sin(x),Math.cos(x)]];
+ const Ry=[[Math.cos(y),0,Math.sin(y)],[0,1,0],[-Math.sin(y),0,Math.cos(y)]];
+ const Rz=[[Math.cos(z),-Math.sin(z),0],[Math.sin(z),Math.cos(z),0],[0,0,1]];
+ return mul(mul(Rx,Ry),Rz);}
+function apply(R,v){return R.map(row=>row.reduce((s,x,i)=>s+x*v[i],0));}
+function len(v){return Math.sqrt(v.reduce((s,x)=>s+x*x,0));}
+function det(A){return A[0][0]*(A[1][1]*A[2][2]-A[1][2]*A[2][1])-A[0][1]*(A[1][0]*A[2][2]-A[1][2]*A[2][0])+A[0][2]*(A[1][0]*A[2][1]-A[1][1]*A[2][0]);}
+function normErr(A){const P=mul(transpose(A),A);let e=0;P.forEach((row,i)=>row.forEach((x,j)=>e=Math.max(e,Math.abs(x-(i===j?1:0)))));return e;}
+function fmt(x){return (Math.abs(x)<0.0005?0:x).toFixed(3).padStart(7,' ');}
+function resize(){[originalCanvas,rotatedCanvas].forEach(canvas=>{const r=canvas.getBoundingClientRect(),d=window.devicePixelRatio||1;canvas.width=Math.max(1,Math.floor(r.width*d));canvas.height=Math.max(1,Math.floor(r.height*d));canvas.getContext('2d').setTransform(d,0,0,d,0,0);});draw();}
+function project(v,w,h,shift){const yaw=-.55,pitch=.38;let [x,y,z]=v;const xx=x*Math.cos(yaw)-y*Math.sin(yaw), yy=x*Math.sin(yaw)+y*Math.cos(yaw);const zz=yy*Math.sin(pitch)+z*Math.cos(pitch), y2=yy*Math.cos(pitch)-z*Math.sin(pitch);const scale=Math.min(w,h)*.22;return [w/2+xx*scale+shift,h/2-y2*scale,zz];}
+function draw(){
+ const shape=shapes[$('shape').value],R=rotMat();
+ function render(canvas,ctx,isRotated){const w=canvas.clientWidth,h=canvas.clientHeight;ctx.clearRect(0,0,w,h);ctx.save();ctx.strokeStyle=getComputedStyle(document.body).color;ctx.globalAlpha=.07;ctx.lineWidth=1;for(let i=0;i<w;i+=28){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,h);ctx.stroke();}for(let j=0;j<h;j+=28){ctx.beginPath();ctx.moveTo(0,j);ctx.lineTo(w,j);ctx.stroke();}ctx.restore();
+ const center=[w/2,h/2];const axes=[[1,0,0,'#E35D55'],[0,1,0,'#2CB889'],[0,0,1,'#356BFA']];axes.forEach(([x,y,z,c])=>{const p=project([x*1.6,y*1.6,z*1.6],w,h,0);ctx.strokeStyle=c;ctx.globalAlpha=.55;ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(center[0],center[1]);ctx.lineTo(p[0],p[1]);ctx.stroke();ctx.globalAlpha=1;});
+ if($('shape').value==='robotarm'){const chain=[[0,0,-.55],[0,0,.05],[-.38,0,.72],[-.48,0,1.34],[-.42,0,1.56]],points=chain.map(v=>project(isRotated?apply(R,v):v,w,h,0));ctx.save();ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle=isRotated?'#356BFA':'#9BA8BD';ctx.lineWidth=18;ctx.beginPath();ctx.moveTo(...points[0]);ctx.lineTo(...points[1]);ctx.stroke();ctx.lineWidth=17;ctx.beginPath();ctx.moveTo(...points[1]);ctx.lineTo(...points[2]);ctx.stroke();ctx.lineWidth=14;ctx.beginPath();ctx.moveTo(...points[2]);ctx.lineTo(...points[3]);ctx.stroke();ctx.lineWidth=10;ctx.beginPath();ctx.moveTo(...points[3]);ctx.lineTo(...points[4]);ctx.stroke();const tip=points[4],prev=points[3],dx=tip[0]-prev[0],dy=tip[1]-prev[1],mag=Math.hypot(dx,dy)||1,nx=-dy/mag,ny=dx/mag;ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(...tip);ctx.lineTo(tip[0]+nx*12,tip[1]+ny*12);ctx.moveTo(...tip);ctx.lineTo(tip[0]-nx*12,tip[1]-ny*12);ctx.stroke();[1,2,3].forEach(i=>{ctx.fillStyle='#F59E0B';ctx.lineWidth=3;ctx.beginPath();ctx.arc(points[i][0],points[i][1],8,0,Math.PI*2);ctx.fill();ctx.stroke();});ctx.fillStyle='#F59E0B';ctx.beginPath();ctx.arc(tip[0],tip[1],5,0,Math.PI*2);ctx.fill();ctx.restore();}
+ else{const points=shape.v.map(v=>project(isRotated?apply(R,v):v,w,h,0));const palettes={cube:['#93C5FD','#3B82F6','#1D4ED8'],tetra:['#F9A8D4','#EC4899','#9D174D'],octa:['#6EE7B7','#10B981','#065F46'],pyramid:['#FDBA74','#F97316','#9A3412'],drone:['#67E8F9','#06B6D4','#155E75'],airplane:['#C4B5FD','#8B5CF6','#4C1D95'],satellite:['#FDE68A','#F59E0B','#92400E'],car:['#FCA5A5','#EF4444','#7F1D1D'],turbine:['#A7F3D0','#14B8A6','#115E59']};const colors=palettes[$('shape').value]||palettes.cube;const faces={cube:[[0,1,5,4],[1,2,6,5],[2,3,7,6],[3,0,4,7],[4,5,6,7],[0,1,2,3]],tetra:[[0,1,2],[0,1,3],[0,2,3],[1,2,3]],octa:[[0,2,4],[0,2,5],[0,3,4],[0,3,5],[1,2,4],[1,2,5],[1,3,4],[1,3,5]],pyramid:[[0,1,4],[1,2,4],[2,3,4],[3,0,4],[0,1,2,3]]};const faceList=faces[$('shape').value]||[];faceList.map(face=>({face,depth:face.reduce((sum,i)=>sum+(points[i][2]||0),0)/face.length})).sort((a,b)=>a.depth-b.depth).forEach(({face},index)=>{ctx.beginPath();ctx.moveTo(points[face[0]][0],points[face[0]][1]);face.slice(1).forEach(i=>ctx.lineTo(points[i][0],points[i][1]));ctx.closePath();ctx.fillStyle=colors[index%colors.length];ctx.globalAlpha=isRotated?.82:.48;ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle=colors[2];ctx.lineWidth=2;ctx.stroke();});ctx.strokeStyle=colors[2];ctx.lineWidth=2.5;shape.e.forEach(([a,b])=>{ctx.beginPath();ctx.moveTo(points[a][0],points[a][1]);ctx.lineTo(points[b][0],points[b][1]);ctx.stroke();});points.forEach(p=>{ctx.beginPath();ctx.arc(p[0],p[1],3.5,0,Math.PI*2);ctx.fillStyle=colors[0];ctx.fill();ctx.strokeStyle=colors[2];ctx.lineWidth=1;ctx.stroke();});}}
+ render(originalCanvas,originalCtx,false);render(rotatedCanvas,rotatedCtx,true);
+}
+function update(){const R=rotMat();['x','y','z'].forEach(k=>$(k+'Val').textContent=$(k+'Angle').value+'°');$('sceneLabel').textContent=shapes[$('shape').value].label+' · Original and rotated geometry';$('matrix').textContent=R.map(row=>'[ '+row.map(fmt).join('  ')+' ]').join('\n');const err=normErr(R),d=det(R),sh=shapes[$('shape').value];let edgeChange=0;sh.e.forEach(([a,b])=>{const before=len(sh.v[a].map((x,i)=>x-sh.v[b][i]));const va=apply(R,sh.v[a]),vb=apply(R,sh.v[b]);const after=len(va.map((x,i)=>x-vb[i]));if(before>1e-12)edgeChange=Math.max(edgeChange,Math.abs(after-before)/before*100);});$('orthErr').textContent=err.toFixed(6);$('detVal').textContent=(d>=0?'+':'')+d.toFixed(3);$('lengthErr').textContent=edgeChange.toFixed(3)+'%';$('checkText').textContent=err<1e-10&&Math.abs(d-1)<1e-10&&edgeChange<1e-8?'Orthogonal rotation verified':'Check numerical precision';$('vertexRows').innerHTML=sh.v.slice(0,4).map((v,i)=>{const a=len(v),b=len(apply(R,v));return `<tr><td>V${i+1}</td><td>${a.toFixed(3)}</td><td>${b.toFixed(3)}</td></tr>`}).join('');draw();}
+['xAngle','yAngle','zAngle','shape'].forEach(id=>$(id).addEventListener('input',update));$('reset').addEventListener('click',()=>{$('xAngle').value=0;$('yAngle').value=0;$('zAngle').value=0;update();});$('random').addEventListener('click',()=>{const vals=[Math.floor(Math.random()*121)-60,Math.floor(Math.random()*121)-60,Math.floor(Math.random()*121)-60];['xAngle','yAngle','zAngle'].forEach((id,i)=>$(id).value=vals[i]);update();});window.addEventListener('resize',resize);resize();update();
+</script>
+</body></html>
